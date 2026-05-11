@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>我的导航站</title>
+  <title>京东导航 - 开源书签管理程序</title>
   <script src="websites.js"></script>
   <style>
     :root {
@@ -30,7 +30,6 @@
       min-height: 100vh;
     }
 
-    /* ── 侧边栏 ── */
     #sidebar {
       width: var(--sidebar-w);
       background: var(--sidebar-bg);
@@ -95,7 +94,6 @@
       border-top: 1px solid var(--border);
     }
 
-    /* ── 主内容 ── */
     #main {
       margin-left: var(--sidebar-w);
       flex: 1;
@@ -103,7 +101,6 @@
       max-width: 1200px;
     }
 
-    /* 搜索框 */
     .search-wrap {
       margin-bottom: 36px;
       position: relative;
@@ -135,7 +132,6 @@
       color: var(--text-muted);
     }
 
-    /* 分类区块 */
     .section { margin-bottom: 40px; }
 
     .section-header {
@@ -158,7 +154,6 @@
       padding: 2px 8px;
     }
 
-    /* 卡片网格 */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -218,10 +213,8 @@
       overflow: hidden;
     }
 
-    /* 隐藏时 */
     .section.hidden, .card.hidden { display: none; }
 
-    /* 无结果 */
     #no-result {
       text-align: center;
       color: var(--text-muted);
@@ -230,7 +223,6 @@
       display: none;
     }
 
-    /* 响应式 */
     @media (max-width: 768px) {
       #sidebar { transform: translateX(-100%); transition: transform .25s; }
       #sidebar.open { transform: translateX(0); }
@@ -258,43 +250,18 @@
 </head>
 <body>
 
-<!-- 侧边栏 -->
 <aside id="sidebar">
   <div class="sidebar-logo">
     <span class="dot"></span>
-    我的导航
+    京东导航
   </div>
-  <nav class="sidebar-nav">
+  <nav class="sidebar-nav" id="sidebar-nav">
     <div class="nav-section-title">分类</div>
-    <a class="nav-link active" onclick="scrollToSection('all')">
-      <span class="icon">🏠</span> 全部
-    </a>
-    <a class="nav-link" onclick="scrollToSection('ai')">
-      <span class="icon">🤖</span> AI 工具
-    </a>
-    <a class="nav-link" onclick="scrollToSection('dev')">
-      <span class="icon">💻</span> 开发工具
-    </a>
-    <a class="nav-link" onclick="scrollToSection('design')">
-      <span class="icon">🎨</span> 设计资源
-    </a>
-    <a class="nav-link" onclick="scrollToSection('info')">
-      <span class="icon">📰</span> 资讯阅读
-    </a>
-    <a class="nav-link" onclick="scrollToSection('productivity')">
-      <span class="icon">⚡</span> 效率工具
-    </a>
-    <a class="nav-link" onclick="scrollToSection('learn')">
-      <span class="icon">📚</span> 学习资源
-    </a>
   </nav>
   <div class="sidebar-footer">✨ 持续更新中</div>
 </aside>
 
-<!-- 主内容 -->
 <main id="main">
-
-  <!-- 搜索 -->
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input id="search" type="text" placeholder="搜索网站名称或描述..." oninput="doSearch(this.value)" />
@@ -302,131 +269,88 @@
   </div>
 
   <div id="no-result">没有找到匹配的网站 🤔</div>
-
-  <!-- AI 工具 -->
-  <div class="section" id="sec-ai">
-    <div class="section-header">
-      <span class="section-icon">🤖</span>
-      <span class="section-title">AI 工具</span>
-      <span class="section-count">0</span>
-    </div>
-    <div class="cards"></div>
-  </div>
-
-  <!-- 开发工具 -->
-  <div class="section" id="sec-dev">
-    <div class="section-header">
-      <span class="section-icon">💻</span>
-      <span class="section-title">开发工具</span>
-      <span class="section-count">0</span>
-    </div>
-    <div class="cards"></div>
-  </div>
-
-  <!-- 设计资源 -->
-  <div class="section" id="sec-design">
-    <div class="section-header">
-      <span class="section-icon">🎨</span>
-      <span class="section-title">设计资源</span>
-      <span class="section-count">0</span>
-    </div>
-    <div class="cards"></div>
-  </div>
-
-  <!-- 资讯阅读 -->
-  <div class="section" id="sec-info">
-    <div class="section-header">
-      <span class="section-icon">📰</span>
-      <span class="section-title">资讯阅读</span>
-      <span class="section-count">0</span>
-    </div>
-    <div class="cards"></div>
-  </div>
-
-  <!-- 效率工具 -->
-  <div class="section" id="sec-productivity">
-    <div class="section-header">
-      <span class="section-icon">⚡</span>
-      <span class="section-title">效率工具</span>
-      <span class="section-count">0</span>
-    </div>
-    <div class="cards"></div>
-  </div>
-
-  <!-- 学习资源 -->
-  <div class="section" id="sec-learn">
-    <div class="section-header">
-      <span class="section-icon">📚</span>
-      <span class="section-title">学习资源</span>
-      <span class="section-count">0</span>
-    </div>
-    <div class="cards"></div>
-  </div>
-
+  <div id="sections-container"></div>
 </main>
 
-<!-- 移动端菜单按钮 -->
 <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
 
 <script>
-  // 渲染网站卡片
-  function renderWebsites() {
-    const sectionMap = {
-      ai: 'sec-ai',
-      dev: 'sec-dev',
-      design: 'sec-design',
-      info: 'sec-info',
-      productivity: 'sec-productivity',
-      learn: 'sec-learn'
-    };
+  const categoryIcons = {
+    '常用': '🔥',
+    'Alist_openlist': '📂',
+    '常用网址': '🌐'
+  };
 
-    Object.keys(websites).forEach(category => {
-      const sectionId = sectionMap[category];
-      const section = document.getElementById(sectionId);
-      if (section) {
-        const cardsContainer = section.querySelector('.cards');
-        const countElement = section.querySelector('.section-count');
-        
-        // 清空现有内容
-        cardsContainer.innerHTML = '';
-        
-        // 渲染新卡片
-        const sites = websites[category];
-        sites.forEach(site => {
-          const card = document.createElement('a');
-          card.className = 'card';
-          card.href = site.url;
-          card.target = '_blank';
-          card.rel = 'noopener';
-          
-          // 提取域名用于favicon
-          const domain = new URL(site.url).hostname;
-          
-          card.innerHTML = `
-            <div class="card-favicon">
-              <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" onerror="this.style.display='none';this.parentNode.textContent='${site.icon || '🌐'}'">
-            </div>
-            <div class="card-info">
-              <div class="card-name">${site.name}</div>
-              <div class="card-desc">${site.desc}</div>
-            </div>
-          `;
-          
-          cardsContainer.appendChild(card);
-        });
-        
-        // 更新计数
-        if (countElement) {
-          countElement.textContent = sites.length;
-        }
-      }
+  const categoryKeys = Object.keys(websites);
+
+  function getCategoryIcon(name) {
+    return categoryIcons[name] || '📁';
+  }
+
+  function buildSidebar() {
+    const nav = document.getElementById('sidebar-nav');
+    categoryKeys.forEach((key, i) => {
+      const a = document.createElement('a');
+      a.className = 'nav-link' + (i === 0 ? ' active' : '');
+      a.innerHTML = `<span class="icon">${getCategoryIcon(key)}</span> ${key}`;
+      a.onclick = function (e) {
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        a.classList.add('active');
+        const el = document.getElementById('sec-' + key);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('sidebar').classList.remove('open');
+      };
+      nav.appendChild(a);
     });
   }
 
-  // 页面加载完成后渲染
-  document.addEventListener('DOMContentLoaded', renderWebsites);
+  function buildSections() {
+    const container = document.getElementById('sections-container');
+    categoryKeys.forEach(key => {
+      const sites = websites[key];
+      const section = document.createElement('div');
+      section.className = 'section';
+      section.id = 'sec-' + key;
 
-  // 搜索
+      const header = document.createElement('div');
+      header.className = 'section-header';
+      header.innerHTML = `
+        <span class="section-icon">${getCategoryIcon(key)}</span>
+        <span class="section-title">${key}</span>
+        <span class="section-count">${sites.length}</span>
+      `;
+      section.appendChild(header);
+
+      const cards = document.createElement('div');
+      cards.className = 'cards';
+
+      sites.forEach(site => {
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.href = site.url;
+        card.target = '_blank';
+        card.rel = 'noopener';
+
+        let domain = '';
+        try { domain = new URL(site.url).hostname; } catch (e) {}
+
+        card.innerHTML = `
+          <div class="card-favicon">
+            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" onerror="this.style.display='none';this.parentNode.textContent='🌐'">
+          </div>
+          <div class="card-info">
+            <div class="card-name">${site.name}</div>
+            <div class="card-desc">${site.desc}</div>
+          </div>
+        `;
+        cards.appendChild(card);
+      });
+
+      section.appendChild(cards);
+      container.appendChild(section);
+    });
+  }
+
   function doSearch(q) {
     q = q.trim().toLowerCase();
     const sections = document.querySelectorAll('.section');
@@ -448,7 +372,11 @@
     document.getElementById('no-result').style.display = anyVisible ? 'none' : 'block';
   }
 
-  // 快捷键 / 聚焦搜索
+  document.addEventListener('DOMContentLoaded', () => {
+    buildSidebar();
+    buildSections();
+  });
+
   document.addEventListener('keydown', e => {
     if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
       e.preventDefault();
@@ -460,21 +388,6 @@
       document.getElementById('search').blur();
     }
   });
-
-  // 侧边栏滚动定位
-  function scrollToSection(id) {
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-    if (id === 'all') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    const map = { ai:'sec-ai', dev:'sec-dev', design:'sec-design', info:'sec-info', productivity:'sec-productivity', learn:'sec-learn' };
-    const el = document.getElementById(map[id]);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    // 移动端关闭侧边栏
-    document.getElementById('sidebar').classList.remove('open');
-  }
 </script>
 </body>
 </html>
