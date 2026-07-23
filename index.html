@@ -278,6 +278,7 @@
   const categoryIcons = {
     '常用': '🔥',
     'Alist_openlist': '📂',
+    '导航': '🧭',
     '常用网址': '🌐'
   };
 
@@ -336,11 +337,11 @@
 
         card.innerHTML = `
           <div class="card-favicon">
-            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" onerror="this.style.display='none';this.parentNode.textContent='🌐'">
+            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" onerror="this.style.display='none';this.parentNode.textContent='${site.icon || '🌐'}'">
           </div>
           <div class="card-info">
             <div class="card-name">${site.name}</div>
-            <div class="card-desc">${site.desc}</div>
+            <div class="card-desc">${site.desc || site.url}</div>
           </div>
         `;
         cards.appendChild(card);
